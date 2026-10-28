@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CosDNA AI Reverse Formulation Research Assistant</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <span class="header-icon">🧪</span>
+        <div>
+          <h1>CosDNA AI Reverse Formulation Research Assistant</h1>
+          <p class="subtitle">化妝品反向配方研發助手 • 第一階段 MVP 原型工作台</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <span class="badge badge-blue">Phase 1: INCI Parsing & Data Engine</span>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <div class="main-layout">
+      <!-- Left Column: Input & Parsing -->
+      <section class="card input-section">
+        <div class="card-header">
+          <div class="title-with-icon">
+            <span class="card-icon">📥</span>
+            <h2>INCI 全成分輸入與解析</h2>
+          </div>
+          <div class="sample-actions">
+            <button type="button" id="load-sample-1" class="btn btn-sm btn-ghost" title="防曬配方">
+              範例 1：高效清爽防曬乳
+            </button>
+            <button type="button" id="load-sample-2" class="btn btn-sm btn-ghost" title="修護乳液">
+              範例 2：二裂酵母修護精華乳
+            </button>
+            <button type="button" id="clear-btn" class="btn btn-sm btn-danger-ghost">
+              清空
+            </button>
+          </div>
+        </div>
+
+        <div class="input-body">
+          <textarea id="inci-input" placeholder="請在此貼上 CosDNA 擷取或任何純文字之 INCI 全成分清單...&#10;（支援逗號分隔或換行清單，例如：Water, Diethylamino Hydroxybenzoyl Hexyl Benzoate, Homosalate...）" spellcheck="false"></textarea>
+        </div>
+
+        <!-- Metric Bar -->
+        <div class="metrics-bar">
+          <div class="metric-item">
+            <span class="metric-label">偵測成分總數</span>
+            <span class="metric-value" id="stat-count">0 項</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">順序保證狀態</span>
+            <span class="metric-tag tag-green">✓ 原始登錄順序保存（嚴禁字母排序）</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">語言純度</span>
+            <span class="metric-tag tag-blue">✓ 100% 純英文 INCI（已過濾中文）</span>
+          </div>
+        </div>
+
+        <!-- Format Toolbar -->
+        <div class="output-toolbar">
+          <div class="format-radios">
+            <label class="radio-label">
+              <input type="radio" name="format-type" value="comma" checked>
+              <span>標準逗號分隔 (Comma)</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="format-type" value="newline">
+              <span>換行列表 (Newline)</span>
+            </label>
+            <label class="radio-label">
+              <input type="radio" name="format-type" value="numbered">
+              <span>配方梯次序號 (#1, #2...)</span>
+            </label>
+          </div>
+          <div class="toolbar-actions">
+            <button type="button" id="copy-btn" class="btn btn-primary">
+              📋 複製目前格式
+            </button>
+            <button type="button" id="download-btn" class="btn btn-outline">
+              📥 匯出 TXT
+            </button>
+          </div>
+        </div>
+
+        <!-- Ranked Ingredients Preview -->
+        <div class="ranked-preview-box">
+          <div class="box-title">
+            <span>成分序列檢驗 (Visual Sequence Verification)</span>
+            <span class="info-note">由左至右、由上至下嚴格依原廠標籤順序呈現</span>
+          </div>
+          <div id="ingredient-chips" class="chips-container">
+            <div class="empty-hint">尚未輸入成分資料，請於上方貼上 INCI 或點選測試範例。</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right Column: AI Reverse Formulation Planning & Boundaries -->
+      <section class="card ai-section">
+        <div class="card-header">
+          <div class="title-with-icon">
+            <span class="card-icon">🤖</span>
+            <h2>AI 反向配方推論結構 (Phase 2/3 規劃)</h2>
+          </div>
+          <span class="status-pill status-disabled">
+            <span class="dot-red"></span> AI 服務未啟用 (待串接安全後端)
+          </span>
+        </div>
+
+        <!-- Epistemic Framework Card -->
+        <div class="epistemic-banner">
+          <div class="banner-title">🛡️ 研發推論三重標籤機制 (Epistemic Categorization)</div>
+          <p class="banner-desc">本專案嚴格遵守化妝品配方學原則，後續 AI 推論均強制標記知識邊界，杜絕模型幻覺：</p>
+          <div class="tags-row">
+            <span class="tag-fact">[已知成分事實 (Fact)]</span>
+            <span class="tag-hypo">[研發推測假設 (Hypothesis)]</span>
+            <span class="tag-valid">[需要實驗驗證 (Validation)]</span>
+          </div>
+        </div>
+
+        <!-- Boundaries & Safeguards Notice -->
+        <div class="safeguards-box">
+          <h3>⚠️ 配方學安全推論邊界聲明</h3>
+          <ul>
+            <li><strong>不推算確定百分比</strong>：INCI 順序不等於嚴格遞減（尤其 1% 臨界線以下成分），不得憑空推算特定成分精確濃度。</li>
+            <li><strong>不斷言原廠製程</strong>：無法僅憑 INCI 確認原廠均質機剪切速度、均質溫度或專利加料時機。</li>
+            <li><strong>不預測確定 SPF 數值</strong>：防曬係數取決於基底乳化、成膜劑增效與人體臨床試驗，不得隨意宣稱固定 SPF/PA 數值。</li>
+          </ul>
+        </div>
+
+        <!-- Schema Overview Cards -->
+        <div class="schema-cards-grid">
+          <div class="schema-card">
+            <div class="schema-card-header">
+              <span class="schema-icon">💧</span>
+              <h4>1. 體系歸屬與水油相分佈</h4>
+            </div>
+            <p class="schema-card-desc">依極性多元醇與酯類/烴類/油脂分佈，推導配方基底相態與極性匹配度。</p>
+            <span class="status-placeholder">[待 AI 後端串接]</span>
+          </div>
+
+          <div class="schema-card">
+            <div class="schema-card-header">
+              <span class="schema-icon">🫧</span>
+              <h4>2. 乳化系統與液晶微結構假設</h4>
+            </div>
+            <p class="schema-card-desc">辨識陰離子/非離子主乳化劑與輔助乳化劑，推估 O/W、W/O 或液晶凝膠網絡。</p>
+            <span class="status-placeholder">[待 AI 後端串接]</span>
+          </div>
+
+          <div class="schema-card">
+            <div class="schema-card-header">
+              <span class="schema-icon">🧪</span>
+              <h4>3. 流變調節與高分子懸浮穩定</h4>
+            </div>
+            <p class="schema-card-desc">分析合成微膠高分子與天然膠質之協同作用，推估耐鹽性與觸變抗沉降能力。</p>
+            <span class="status-placeholder">[待 AI 後端串接]</span>
+          </div>
+
+          <div class="schema-card">
+            <div class="schema-card-header">
+              <span class="schema-icon">☀️</span>
+              <h4>4. 防曬劑組合與光安定性分析</h4>
+            </div>
+            <p class="schema-card-desc">評估廣譜 UVA/UVB 化學/物理防曬組合與光安定劑之協同防護機制。</p>
+            <span class="status-placeholder">[待 AI 後端串接]</span>
+          </div>
+
+          <div class="schema-card full-width">
+            <div class="schema-card-header">
+              <span class="schema-icon">🔬</span>
+              <h4>5. 建議實驗驗證規劃 (Recommended Bench Tests)</h4>
+            </div>
+            <div class="experiment-list-preview">
+              <span class="exp-item">• 離心分層試驗 (3000rpm x 30min)</span>
+              <span class="exp-item">• 滴稀釋染色法與電導度測定 (乳化型態)</span>
+              <span class="exp-item">• 旋轉黏度計流變曲線與觸變性分析</span>
+              <span class="exp-item">• 偏光顯微鏡 (微胞粒徑分佈與液晶相觀察)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Backend Health Status Card -->
+        <div class="backend-status-card">
+          <div class="status-card-top">
+            <span class="backend-dot dot-off"></span>
+            <span class="backend-text" id="backend-status-text">安全中繼後端：未連線 (http://localhost:3000)</span>
+            <button type="button" id="check-backend-btn" class="btn btn-xs btn-outline">
+              🔄 檢查連線
+            </button>
+          </div>
+          <p class="backend-note">
+            安全規範：本專案嚴格杜絕在前端填寫 API Key。後續 AI 分析將由本機獨立中繼伺服器安全代理。未啟動後端前，介面真實呈現未啟用，絕不產生偽造假資料。
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <span>CosDNA AI Reverse Formulation Assistant • Cosmetic R&D Academic/Industrial Prototype</span>
+    </footer>
+  </div>
+
+  <script src="../bookmarklet/inci-extractor.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
